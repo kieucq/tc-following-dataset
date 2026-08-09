@@ -1,0 +1,82 @@
+# Paths may be absolute or relative to this file. Output filename values are
+# names only; Stage 1 supports the ID placeholder shown below, while Stage 2
+# supports {frames} and {variables}.
+cmip:
+  step1:
+    track_file: ../input/best_track/baseline_track.txt
+    data_dir: ../input/cmip6
+    workdir: ../output/cmip6/level_1_data
+    imsize_x: 100
+    imsize_y: 100
+    interpolation_steps: 4
+    timestep_hours: 6
+    output_filename_template: WRF_STORMID_{storm_id}.nc
+
+  step2:
+    indir: ../output/cmip6/level_1_data
+    outdir: ../output/cmip6/level_2_data
+    frames: 5
+    sample_stride: 4
+    var_levels:
+      - U10m
+      - V10m
+      - SST
+      - LANDMASK
+      - U28
+      - V28
+      - U05
+      - V05
+      - T23
+      - QVAPOR10
+      - PHB10
+      - PSFC
+      - RAINNC
+      - RAINC
+    x_filename: cmip_{frames}f_{variables}v_X.npy
+    z_filename: cmip_{frames}f_{variables}v_Z.npy
+    storm_ids_filename: cmip_{frames}f_{variables}v_storm_ids.npy
+    storm_lifetimes_filename: cmip_{frames}f_{variables}v_storm_lifetimes.npy
+    chunk_start_frames_filename: cmip_{frames}f_{variables}v_chunk_start_frames.npy
+
+idealize:
+  step1:
+    data_dir: ../input/wrf
+    workdir: ../output/idealized/level_1_data
+    imsize_x: 100
+    imsize_y: 100
+    experiment_wrf:
+      - exp_02km_m01
+      - exp_02km_m02
+      - exp_02km_m03
+      - exp_02km_m04
+      - exp_02km_m05
+      - exp_02km_m06
+      - exp_02km_m07
+      - exp_02km_m08
+      - exp_02km_m09
+      - exp_02km_m10
+    x_resolution: d01
+    output_filename_template: WRF_STORMID_{experiment_id}.nc
+
+  step2:
+    indir: ../output/idealized/level_1_data
+    outdir: ../output/idealized/level_2_data
+    frames: 5
+    sample_stride: 4
+    var_levels:
+      - U10m
+      - V10m
+      - SST
+      - LANDMASK
+      - U14
+      - V14
+      - U03
+      - V03
+      - T12
+      - QVAPOR05
+      - PHB05
+    x_filename: idealized_{frames}f_{variables}v_X.npy
+    z_filename: idealized_{frames}f_{variables}v_Z.npy
+    experiment_ids_filename: idealized_{frames}f_{variables}v_experiment_ids.npy
+    storm_lifetimes_filename: idealized_{frames}f_{variables}v_storm_lifetimes.npy
+    chunk_start_frames_filename: idealized_{frames}f_{variables}v_chunk_start_frames.npy
