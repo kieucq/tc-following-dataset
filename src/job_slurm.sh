@@ -26,7 +26,10 @@ set -x
 # Configuration
 # ------------------------------------------------------------------------------
 config_file="${CONFIG_FILE:-$script_dir/config.yaml}"
-pipeline="${PIPELINE:-cmip6}"
+#pipeline="${PIPELINE:-cmip6}"
+pipeline="idealize"
+indir="/N/project/Typhoon-deep-learning/data/tc-wrf/"
+outdir="/N/u/ckieu/BigRed200/codex/tc-following-dataset/output/idealize/"
 case "$pipeline" in
     cmip5)
         step1_script="step1_cropping_cmip5.py"
@@ -36,7 +39,7 @@ case "$pipeline" in
         step1_script="step1_cropping_cmip6.py"
         step2_script="step2_merging_cmip6.py"
         ;;
-    idealize|idealized)
+    idealize)
         step1_script="step1_cropping_idealized.py"
         step2_script="step2_merging_idealized.py"
         ;;
@@ -57,7 +60,8 @@ run_step2=1
 # ------------------------------------------------------------------------------
 if [ "$run_step1" -eq 1 ]; then
     python "$step1_script" \
-        --config "$config_file"
+        --config "$config_file" \
+        --data_dir "$data_dir" --workdir "${outdir}/level_1_data/"
 fi
 
 # ------------------------------------------------------------------------------
@@ -65,7 +69,8 @@ fi
 # ------------------------------------------------------------------------------
 if [ "$run_step2" -eq 1 ]; then
     python "$step2_script" \
-        --config "$config_file"
+        --config "$config_file" \
+        --outdir "${outdir}/level_2_data"
 fi
 
 echo "All requested steps completed."
