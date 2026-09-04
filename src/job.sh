@@ -6,7 +6,10 @@
 #SBATCH -A r00043
 #SBATCH --mem=64G
 module load python/gpu/3.12.5
-script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+#script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+#repo_dir=$(CDPATH= cd -- "$script_dir/.." && pwd)
+repo_dir="/N/u/ckieu/BigRed200/codex/tc-following-dataset/"
+script_dir="${repo_dir}/src"
 cd "$script_dir" || exit 1
 set -x
 
@@ -26,28 +29,47 @@ set -x
 # Configuration
 # ------------------------------------------------------------------------------
 config_file="${CONFIG_FILE:-$script_dir/config.yaml}"
-#pipeline="${PIPELINE:-cmip6}"
-pipeline="idealize"
-indir="/N/project/Typhoon-deep-learning/data/tc-wrf/"
-outdir="/N/u/ckieu/BigRed200/codex/tc-following-dataset/output/idealize/"
+pipeline="${PIPELINE:-idealize}"
 case "$pipeline" in
     cmip5)
         step1_script="step1_cropping_cmip5.py"
         step2_script="step2_merging_cmip5.py"
+        default_track_file="$repo_dir/input/best_track/baseline_track.txt"
+        default_data_dir="$repo_dir/input/cmip6"
+        default_level_1_dir="$repo_dir/output/cmip6/level_1_data"
+        default_level_2_dir="$repo_dir/output/cmip6/level_2_data"
+        uses_track_file=1
         ;;
     cmip6)
         step1_script="step1_cropping_cmip6.py"
         step2_script="step2_merging_cmip6.py"
+        default_track_file="$repo_dir/input/best_track/baseline_track.txt"
+        default_data_dir="$repo_dir/input/cmip6"
+        default_level_1_dir="$repo_dir/output/cmip6/level_1_data"
+        default_level_2_dir="$repo_dir/output/cmip6/level_2_data"
+        uses_track_file=1
         ;;
     idealize)
         step1_script="step1_cropping_idealized.py"
         step2_script="step2_merging_idealized.py"
+        default_track_file=""
+        default_data_dir="$repo_dir/input/wrf"
+        default_level_1_dir="$repo_dir/output/idealize/level_1_data"
+        default_level_2_dir="$repo_dir/output/idealize/level_2_data"
+        uses_track_file=0
         ;;
     *)
         echo "Unknown PIPELINE '$pipeline'; use cmip5, cmip6, or idealize." >&2
         exit 1
         ;;
 esac
+
+# Dataset paths live here rather than in config.yaml. These environment
+# variables allow a submission to override any path without editing this file.
+track_file="${TRACK_FILE:-$default_track_file}"
+data_dir="${DATA_DIR:-$default_data_dir}"
+level_1_dir="${LEVEL1_DIR:-$default_level_1_dir}"
+level_2_dir="${LEVEL2_DIR:-$default_level_2_dir}"
 
 # ------------------------------------------------------------------------------
 # Step toggles: set to 1 to run, 0 to skip
@@ -59,9 +81,15 @@ run_step2=1
 # 1) Crop raw WRF outputs
 # ------------------------------------------------------------------------------
 if [ "$run_step1" -eq 1 ]; then
-    python "$step1_script" \
-        --config "$config_file" \
-        --data_dir "$indir" --workdir "${outdir}/level_1_data/"
+    step1_args=(
+        --config "$config_file"
+        --data_dir "$data_dir"
+        --workdir "$level_1_dir"
+    )
+    if [ "$uses_track_file" -eq 1 ]; then
+        step1_args+=(--track_file "$track_file")
+    fi
+    python "$step1_script" "${step1_args[@]}"
 fi
 
 # ------------------------------------------------------------------------------
@@ -70,7 +98,8 @@ fi
 if [ "$run_step2" -eq 1 ]; then
     python "$step2_script" \
         --config "$config_file" \
-        --outdir "${outdir}/level_2_data"
+        --indir "$level_1_dir" \
+        --outdir "$level_2_dir"
 fi
 
 echo "All requested steps completed."

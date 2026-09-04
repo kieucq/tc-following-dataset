@@ -1,11 +1,9 @@
-# Paths may be absolute or relative to this file. Output filename values are
-# names only; Stage 1 supports the ID placeholder shown below, while Stage 2
-# supports {frames} and {variables}.
+# Processing parameters and output filenames. Dataset paths are intentionally
+# kept in job.sh and passed to the Python scripts as command-line arguments.
+# Stage 1 filenames support the ID placeholder shown below, while Stage 2
+# filenames support {frames} and {variables}.
 cmip:
   step1:
-    track_file: ../input/best_track/baseline_track.txt
-    data_dir: ../input/cmip6
-    workdir: ../output/cmip6/level_1_data
     imsize_x: 100
     imsize_y: 100
     interpolation_steps: 4
@@ -13,8 +11,6 @@ cmip:
     output_filename_template: WRF_STORMID_{storm_id}.nc
 
   step2:
-    indir: ../output/cmip6/level_1_data
-    outdir: ../output/cmip6/level_2_data
     frames: 5
     sample_stride: 4
     var_levels:
@@ -40,10 +36,8 @@ cmip:
 
 idealize:
   step1:
-    data_dir: ../input/wrf
-    workdir: ../output/idealized/level_1_data
-    imsize_x: 100
-    imsize_y: 100
+    imsize_x: 200
+    imsize_y: 200
     experiment_wrf:
       - exp_02km_m01
       - exp_02km_m02
@@ -55,14 +49,12 @@ idealize:
       - exp_02km_m08
       - exp_02km_m09
       - exp_02km_m10
-    x_resolution: d01
+    x_resolution: d03
     output_filename_template: WRF_STORMID_{experiment_id}.nc
 
   step2:
-    indir: ../output/idealized/level_1_data
-    outdir: ../output/idealized/level_2_data
     frames: 5
-    sample_stride: 4
+    sample_stride: 8
     var_levels:
       - U10m
       - V10m
@@ -75,8 +67,8 @@ idealize:
       - T12
       - QVAPOR05
       - PHB05
-    x_filename: idealized_{frames}f_{variables}v_X.npy
-    z_filename: idealized_{frames}f_{variables}v_Z.npy
-    experiment_ids_filename: idealized_{frames}f_{variables}v_experiment_ids.npy
-    storm_lifetimes_filename: idealized_{frames}f_{variables}v_storm_lifetimes.npy
-    chunk_start_frames_filename: idealized_{frames}f_{variables}v_chunk_start_frames.npy
+    x_filename: ideal_{frames}f_{variables}v_X.npy
+    z_filename: ideal_{frames}f_{variables}v_Z.npy
+    experiment_ids_filename: ideal_{frames}f_{variables}v_experiment_ids.npy
+    storm_lifetimes_filename: ideal_{frames}f_{variables}v_storm_lifetimes.npy
+    chunk_start_frames_filename: ideal_{frames}f_{variables}v_chunk_start_frames.npy
