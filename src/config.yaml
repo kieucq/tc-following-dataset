@@ -4,8 +4,8 @@
 # filenames support {frames} and {variables}.
 cmip:
   step1:
-    imsize_x: 100
-    imsize_y: 100
+    imsize_x: 101
+    imsize_y: 101
     interpolation_steps: 4
     timestep_hours: 6
     output_filename_template: WRF_STORMID_{storm_id}.nc

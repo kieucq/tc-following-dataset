@@ -5,11 +5,11 @@
 #SBATCH -p general
 #SBATCH -A r00043
 #SBATCH --mem=64G
-module load python/gpu/3.12.5
+conda deactivate >& /dev/null
+module load python/gpu/3.12.5 >& /dev/null
 repo_dir="/N/u/ckieu/BigRed200/codex/tc-following-dataset/"
 script_dir="${repo_dir}/src"
 cd "$script_dir" || exit 1
-set -x
 
 # ------------------------------------------------------------------------------
 # May need to set up a virtual environment if you haven't already. Uncomment the 
@@ -24,19 +24,31 @@ set -x
 #source "$venv_dir/bin/activate"
 
 # ------------------------------------------------------------------------------
+# Step toggles for workflow: set to 1 to run, 0 to skip
+# ------------------------------------------------------------------------------
+run_step1=1
+run_step2=1
+
+# ------------------------------------------------------------------------------
 # Configuration
 # ------------------------------------------------------------------------------
 config_file="${CONFIG_FILE:-$script_dir/config.yaml}"
-#pipeline="${PIPELINE:-idealize}"
-pipeline="idealize"
+pipeline="$1"
+if [ -z "$pipeline" ]; then
+    echo "Error: Missing required argument <pipeline>" >&2
+    echo "Usage: $0 <pipeline>, where <pipeline>: cmip5, cmip6, or idealize" >&2
+    exit 1
+fi
+echo "Using pipeline: $pipeline"
+set -x
 case "$pipeline" in
     cmip5)
         step1_script="step1_cropping_cmip5.py"
         step2_script="step2_merging_cmip5.py"
         default_track_file="$repo_dir/input/best_track/baseline_track.txt"
-        default_data_dir="$repo_dir/input/cmip6"
-        default_level_1_dir="$repo_dir/output/cmip6/level_1_data"
-        default_level_2_dir="$repo_dir/output/cmip6/level_2_data"
+        default_data_dir="$repo_dir/input/cmip5"
+        default_level_1_dir="$repo_dir/output/cmip5/level_1_data"
+        default_level_2_dir="$repo_dir/output/cmip5/level_2_data"
         uses_track_file=1
         ;;
     cmip6)
@@ -69,12 +81,6 @@ track_file="${TRACK_FILE:-$default_track_file}"
 data_dir="${DATA_DIR:-$default_data_dir}"
 level_1_dir="${LEVEL1_DIR:-$default_level_1_dir}"
 level_2_dir="${LEVEL2_DIR:-$default_level_2_dir}"
-
-# ------------------------------------------------------------------------------
-# Step toggles: set to 1 to run, 0 to skip
-# ------------------------------------------------------------------------------
-run_step1=1
-run_step2=1
 
 # ------------------------------------------------------------------------------
 # 1) Crop raw WRF outputs
