@@ -36,8 +36,8 @@ cmip:
 
 idealize:
   step1:
-    imsize_x: 200
-    imsize_y: 200
+    imsize_x: 101
+    imsize_y: 101
     experiment_wrf:
       - exp_02km_m01
       - exp_02km_m02
@@ -49,7 +49,17 @@ idealize:
       - exp_02km_m08
       - exp_02km_m09
       - exp_02km_m10
-    x_resolution: d03
+      - exp_02km_u01
+      - exp_02km_u02
+      - exp_02km_u03
+      - exp_02km_u04
+      - exp_02km_u05
+      - exp_02km_u06
+      - exp_02km_u07
+      - exp_02km_u08
+      - exp_02km_u09
+      - exp_02km_u10      
+    x_resolution: d02
     output_filename_template: WRF_STORMID_{experiment_id}.nc
 
   step2:

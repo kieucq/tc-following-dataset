@@ -6,8 +6,6 @@
 #SBATCH -A r00043
 #SBATCH --mem=64G
 module load python/gpu/3.12.5
-#script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-#repo_dir=$(CDPATH= cd -- "$script_dir/.." && pwd)
 repo_dir="/N/u/ckieu/BigRed200/codex/tc-following-dataset/"
 script_dir="${repo_dir}/src"
 cd "$script_dir" || exit 1
@@ -29,7 +27,8 @@ set -x
 # Configuration
 # ------------------------------------------------------------------------------
 config_file="${CONFIG_FILE:-$script_dir/config.yaml}"
-pipeline="${PIPELINE:-idealize}"
+#pipeline="${PIPELINE:-idealize}"
+pipeline="idealize"
 case "$pipeline" in
     cmip5)
         step1_script="step1_cropping_cmip5.py"
