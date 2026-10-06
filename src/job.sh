@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH -N 1
 #SBATCH -t 72:00:00
-#SBATCH -J WRF-TC-Prep
+#SBATCH -J tc-following-dataset
 #SBATCH -p general
 #SBATCH -A r00043
 #SBATCH --mem=64G

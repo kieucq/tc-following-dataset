@@ -11,7 +11,7 @@ cmip:
     output_filename_template: WRF_STORMID_{storm_id}.nc
 
   step2:
-    frames: 5
+    frames: 9 
     sample_stride: 4
     var_levels:
       - U10m
@@ -63,7 +63,7 @@ idealize:
     output_filename_template: WRF_STORMID_{experiment_id}.nc
 
   step2:
-    frames: 5
+    frames: 9
     sample_stride: 8
     var_levels:
       - U10m
