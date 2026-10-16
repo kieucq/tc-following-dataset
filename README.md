@@ -1,4 +1,4 @@
-# Tropical Cyclone Following Dataset
+# Tropical Cyclone-Following Dataset
 
 ## Description
 
@@ -34,6 +34,9 @@ lists are configured independently. Selecting
 .
 ├── docs/
 │   └── draft.tex             # Dataset manuscript and scientific description
+├── dataset/                  
+│   ├── cmip6/                # Final data release on Huggingface for CMIP6 downscaling
+│   └── idealized/            # Final data release on Huggingface for idealized simulations
 ├── input/
 │   ├── best_track/           # TC track ASCII files
 │   ├── cmip6/                # Raw CMIP6-forced WRF output used by Stage 1
@@ -203,6 +206,4 @@ citation when it becomes available.
 
 ## Contact
 
-**Chanh Kieu**  
-Department of Earth and Atmospheric Sciences, Indiana University Bloomington  
-[ckieu@iu.edu](mailto:ckieu@iu.edu)
+**Chanh Kieu**, Indiana University Bloomington. Email: [ckieu@iu.edu](mailto:ckieu@iu.edu)
